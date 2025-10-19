@@ -1,0 +1,13 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Copy and Run Studio" type="RunNativeExe" factoryName="Native Executable">
+    <option name="EXE_PATH" value="$PROJECT_DIR$/../../../../Games/Koikatsu/CharaStudio.exe" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../../Games/Koikatsu" />
+    <option name="PASS_PARENT_ENVS" value="1" />
+    <option name="USE_EXTERNAL_CONSOLE" value="0" />
+    <method v="2">
+      <option name="Build Solution" enabled="true" />
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_Copy Console DLL" />
+    </method>
+  </configuration>
+</component>
