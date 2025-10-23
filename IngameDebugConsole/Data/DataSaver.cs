@@ -18,6 +18,7 @@ public static class DataSaver
 	private static List<ConfigEntry<int>> _ints;
 	private static List<ConfigEntry<float>> _floats;
 	private static List<ConfigEntry<bool>> _bools;
+	private static List<ConfigEntry<Vector2>> _vector2s;
 
 	private static List<string> _configs;
 
@@ -29,6 +30,7 @@ public static class DataSaver
 		_ints = new List<ConfigEntry<int>>();
 		_floats = new List<ConfigEntry<float>>();
 		_bools = new List<ConfigEntry<bool>>();
+		_vector2s = new List<ConfigEntry<Vector2>>();
 	}
 
 	public static void Save(string key, bool value, string section = GeneralSection, string description = "")
@@ -50,6 +52,12 @@ public static class DataSaver
 	}
 
 	public static void Save(string key, string value, string section = GeneralSection, string description = "")
+	{
+		ValidateConfig(key, value, section, description);
+		SetValue(key, value);
+	}
+
+	public static void Save(string key, Vector2 value, string section = GeneralSection, string description = "")
 	{
 		ValidateConfig(key, value, section, description);
 		SetValue(key, value);
@@ -83,6 +91,13 @@ public static class DataSaver
 	}
 
 	public static string Load(string key, string defaultValue = "", string section = GeneralSection,
+		string description = "")
+	{
+		ValidateConfig(key, defaultValue, section, description);
+		return FindConfig(key, defaultValue).Value;
+	}
+
+	public static Vector2 Load(string key, Vector2 defaultValue = default, string section = GeneralSection,
 		string description = "")
 	{
 		ValidateConfig(key, defaultValue, section, description);
@@ -164,6 +179,7 @@ public static class DataSaver
 			int => _ints,
 			float => _floats,
 			bool => _bools,
+			Vector2 => _vector2s,
 			KeyboardShortcut => _keys,
 			_ => null
 		};
@@ -179,7 +195,6 @@ public static class DataSaver
 
 	private static void SetValue<T>(string key, T value)
 	{
-		Debug.Log($"Saving {key}");
 		ConfigEntry<T> foundKey = FindConfig(key, value);
 		foundKey.Value = value;
 	}

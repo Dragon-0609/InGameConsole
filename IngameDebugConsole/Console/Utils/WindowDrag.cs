@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Data;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace InGameDebugConsole;
@@ -52,7 +53,7 @@ public class WindowDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
-		
+		DebugLogManager.Instance.SaveLocation();
 		_isDragging = false;
 	}
 }

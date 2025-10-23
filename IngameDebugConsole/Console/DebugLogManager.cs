@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using Data;
 
 // Receives debug entries and custom events (e.g. Clear, Collapse, Filter by Type)
 // and notifies the recycled list view of changes to the list of debug entries
@@ -160,7 +161,11 @@ namespace InGameDebugConsole
 		private PointerEventData nullPointerEventData;
 
 		private string _searchCache;
-			
+		private Vector2 _prevLocation;
+		private Vector2 _prevSize;
+		
+		public static DebugLogManager Instance => instance;
+
 #if !UNITY_EDITOR && UNITY_ANDROID
 		private DebugLogLogcatListener logcatListener;
 #endif
@@ -260,6 +265,19 @@ namespace InGameDebugConsole
 		{
 			ClearSearchFieldButton.SetActive(false);
 			HideButtonPressed();
+			DataSaver.ValidateConfig("Save Window location and Size", false);
+			DataSaver.ValidateConfig("Window Location", logWindowTR.anchoredPosition);
+			DataSaver.ValidateConfig("Window Size", logWindowTR.sizeDelta);
+
+			if (DataSaver.Load("Save Window location and Size", false))
+			{
+				logWindowTR.anchoredPosition = DataSaver.Load("Window Location", logWindowTR.anchoredPosition);
+				logWindowTR.sizeDelta = DataSaver.Load("Window Size", logWindowTR.sizeDelta);
+				SetTopText(logWindowTR.sizeDelta.x);
+			}
+
+			_prevLocation = logWindowTR.anchoredPosition;
+			_prevSize = logWindowTR.sizeDelta;
 		}
 
 		// Window is resized, update the list
@@ -553,16 +571,27 @@ namespace InGameDebugConsole
 			// logWindowTR.anchorMin = anchorMin;
 			logWindowTR.sizeDelta = new Vector2(newWidth, newHeight);
 
+			SetTopText(newWidth);
+
+
+			// Update the recycled list view
+			recycledListView.OnViewportDimensionsChanged();
+
+			if (_prevSize != logWindowTR.sizeDelta)
+			{
+				_prevSize = logWindowTR.sizeDelta;
+				DataSaver.Save("Window Size", _prevSize);
+			}
+		}
+
+		private void SetTopText(float newWidth)
+		{
 			string topBarFullText = "In Game Debug Console (2018) [developer: yasirkula, integrated: Dragon-LV]";
 			string topBarShortText = "In Game Debug Console (2018) [yasirkula]";
 			float minWidthForShowingFullText = 515f;
 			string text = newWidth < minWidthForShowingFullText ? topBarShortText : topBarFullText;
 			if (TopBarText.text != text)
 				TopBarText.text = text;
-			
-			
-			// Update the recycled list view
-			recycledListView.OnViewportDimensionsChanged();
 		}
 
 		public void SearchUpdated()
@@ -665,7 +694,15 @@ namespace InGameDebugConsole
 			pooledLogItems.Add( logItem );
 		}
 
-
+		public void SaveLocation()
+		{
+			if (_prevLocation != logWindowTR.anchoredPosition)
+			{
+				_prevLocation = logWindowTR.anchoredPosition;
+				DataSaver.Save("Window Location", _prevLocation);
+			}
+		}
+		
 		// Fetch a log item from the pool
 		public DebugLogItem PopLogItem()
 		{

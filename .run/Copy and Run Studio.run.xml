@@ -7,7 +7,7 @@
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <method v="2">
       <option name="Build Solution" enabled="true" />
-      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_Copy Console DLL" />
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_Copy DLL" />
     </method>
   </configuration>
 </component>
